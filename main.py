@@ -21,25 +21,23 @@ class WaterMarkGenerator(Tk):
         self._frame = None
         self.switch_frame(MainFrame)
 
-    def switch_frame(self, frame_class):
+    def switch_frame(self, frame_class, **kwargs):
         # Destroys the current frame and replaces it with a new frame
-        new_frame = frame_class(self)
+        objects_to_send = kwargs
+        new_frame = frame_class(self, objects_to_send)
         if self._frame is not None:
-            self._frame.destoy()
+            self._frame.destroy()
         self._frame = new_frame
         self._frame.pack()
+        
 
 
 class MainFrame(Frame):
-    def __init__(self, master):
+    def __init__(self, master, objects):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
-        label = Label(self.master, text="Please upload an image to watermark.")
-        label.pack(pady=30)
-        upload_button = Button(self.master, text='Upload a File', command=self.open_file)
-        upload_button.pack(expand=True)
-        self.pack(fill=BOTH, expand=1)
-
+        Label(self, text="Please upload an image to watermark.").pack(pady=30)
+        Button(self, text='Upload a File', command=self.open_file).pack(expand=True)
 
     def open_file(self):
         self.file_path = filedialog.askopenfilename(
@@ -53,16 +51,17 @@ class MainFrame(Frame):
         if self.file_path is not None:
             try:
                 self.image = Image.open(fp=self.file_path, mode='r')
-                master.switch_frame(CheckImageFrame)
+                self.master.switch_frame(CheckImageFrame, image=self.image)
             except IOError:
                 pop_up_window()
 
 
 
 class CheckImageFrame(Frame):
-    def __init__(self, master):
+    def __init__(self, master, objects):
         Frame.__init__(self, master)
-        Label(self, text="This is page one").pack()(side="top", fill="x", pady=10)
+        Label(self, text="This is page one").pack(side="top", fill="x", pady=10)
+        print(objects)
         
 
 
@@ -78,10 +77,6 @@ class SaveImageFrame(Frame):
             
 
             
-
-
-
-
 
 
 def main():
