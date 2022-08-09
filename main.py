@@ -2,7 +2,7 @@ from cProfile import label
 from doctest import master
 from operator import mod
 from PIL import Image, ImageTk
-from tkinter import BOTH, Button, Tk, Toplevel, filedialog
+from tkinter import BOTH, Button, PhotoImage, Tk, Toplevel, filedialog
 from tkinter.ttk import Frame, Label
 
 
@@ -60,8 +60,14 @@ class MainFrame(Frame):
 class CheckImageFrame(Frame):
     def __init__(self, master, objects):
         Frame.__init__(self, master)
-        Label(self, text="This is page one").pack(side="top", fill="x", pady=10)
-        print(objects)
+        Label(self, text="This is page one").pack(fill="x", pady=10)
+        image = None
+        for item in objects:
+            if item == 'image':
+                image = PhotoImage(file=objects[item])
+
+
+        Label(self, image=image).pack(fill="x", pady=20)
         
 
 
