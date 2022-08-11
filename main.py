@@ -16,11 +16,11 @@ def pop_up_window():
     button.grid(row=1, column=0)
 
 class WaterMarkGenerator(Tk):
-    # USEFUL RESOURCE https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
     def __init__(self):
         Tk.__init__(self)
         self._frame = None
         self.switch_frame(MainFrame)
+        self.geometry('500x200')
 
     def switch_frame(self, frame_class, image=None):
         # Destroys the current frame and replaces it with a new frame
@@ -30,7 +30,6 @@ class WaterMarkGenerator(Tk):
         self._frame = new_frame
         self._frame.pack()
         
-
 
 class MainFrame(Frame):
     def __init__(self, master, image):
@@ -57,9 +56,9 @@ class MainFrame(Frame):
                 pop_up_window()
 
 
-
 class CheckImageFrame(Frame):
     def __init__(self, master, image):
+        self.image = image
         Frame.__init__(self, master)
         Label(self, text="This is page one").pack(fill="x", pady=10)
         Label(self, image=image).pack(fill='x', pady=50)
@@ -84,7 +83,6 @@ class SaveImageFrame(Frame):
 
 def main():
     app = WaterMarkGenerator()
-    app.geometry('500x200')
     app.mainloop()
 
 if __name__ == '__main__':
