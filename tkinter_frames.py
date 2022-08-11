@@ -2,8 +2,9 @@ from cProfile import label
 from doctest import master
 from logging import root
 from operator import mod
+from tkinter.messagebox import YES
 from PIL import Image, ImageTk
-from tkinter import BOTH, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas
+from tkinter import BOTH, CENTER, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas
 from tkinter.ttk import Frame, Label
 
 
@@ -36,15 +37,15 @@ class MainFrame(Frame):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
         Label(self, text="Please upload an image to watermark.").pack(pady=30)
-        Button(self, text='Upload a File', command=self.open_file).pack(expand=True)
+        Button(self, text='Upload a File', command=self._open_file).pack(expand=True)
 
-    def open_file(self):
+    def _open_file(self):
         self.file_path = filedialog.askopenfilename(
             initialdir='/',
             filetypes = (
                 ('JPEG', '*.jpg'),
                 ('PNF', '*.png'),
-                ('All files', '*.*')
+                ('All files', '*.*') 
             )
         )
         if self.file_path is not None:
@@ -60,8 +61,14 @@ class CheckImageFrame(Frame):
     def __init__(self, master, image):
         Frame.__init__(self, master)
         self.image = image
-        Label(self, text="This is page one").grid(column=1, row=0)
-        Label(self, image=image).grid(column=1, row=4)
+        image_width = self.image.width()
+        image_height = self.image.height()
+        print(image_width, image_height)
+        self.master.geometry(f"{image_width + 20}x{image_height + 40}")
+        Label(self, text="This is page one").pack(side="top")
+        Label(self, image=image).pack(fill=BOTH, expand=YES)
+
+        
         
 
 class SaveImageFrame(Frame):
