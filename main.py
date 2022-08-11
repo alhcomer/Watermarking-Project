@@ -1,8 +1,9 @@
 from cProfile import label
 from doctest import master
+from logging import root
 from operator import mod
 from PIL import Image, ImageTk
-from tkinter import BOTH, Button, PhotoImage, Tk, Toplevel, filedialog
+from tkinter import BOTH, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas
 from tkinter.ttk import Frame, Label
 
 
@@ -21,10 +22,9 @@ class WaterMarkGenerator(Tk):
         self._frame = None
         self.switch_frame(MainFrame)
 
-    def switch_frame(self, frame_class, **kwargs):
+    def switch_frame(self, frame_class, image=None):
         # Destroys the current frame and replaces it with a new frame
-        objects_to_send = kwargs
-        new_frame = frame_class(self, objects_to_send)
+        new_frame = frame_class(self, image)
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
@@ -33,7 +33,7 @@ class WaterMarkGenerator(Tk):
 
 
 class MainFrame(Frame):
-    def __init__(self, master, objects):
+    def __init__(self, master, image):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
         Label(self, text="Please upload an image to watermark.").pack(pady=30)
@@ -50,24 +50,21 @@ class MainFrame(Frame):
         )
         if self.file_path is not None:
             try:
-                self.image = Image.open(fp=self.file_path, mode='r')
-                self.master.switch_frame(CheckImageFrame, image=self.image)
+                self.image = Image.open(self.file_path, mode='r')
+                self.tkinter_image = ImageTk.PhotoImage(self.image)
+                self.master.switch_frame(CheckImageFrame, image=self.tkinter_image)
             except IOError:
                 pop_up_window()
 
 
 
 class CheckImageFrame(Frame):
-    def __init__(self, master, objects):
+    def __init__(self, master, image):
         Frame.__init__(self, master)
         Label(self, text="This is page one").pack(fill="x", pady=10)
-        image = None
-        for item in objects:
-            if item == 'image':
-                image = PhotoImage(file=objects[item])
+        Label(self, image=image).pack(fill='x', pady=50)
+        
 
-
-        Label(self, image=image).pack(fill="x", pady=20)
         
 
 
