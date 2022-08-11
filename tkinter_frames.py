@@ -4,7 +4,7 @@ from logging import root
 from operator import mod
 from tkinter.messagebox import YES
 from PIL import Image, ImageTk
-from tkinter import BOTH, CENTER, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas
+from tkinter import BOTH, BOTTOM, CENTER, LEFT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas
 from tkinter.ttk import Frame, Label
 
 
@@ -64,11 +64,20 @@ class CheckImageFrame(Frame):
         image_width = self.image.width()
         image_height = self.image.height()
         print(image_width, image_height)
-        self.master.geometry(f"{image_width + 20}x{image_height + 40}")
-        Label(self, text="This is page one").pack(side="top")
+        self.master.geometry(f"{image_width + 20}x{image_height + 70}")
         Label(self, image=image).pack(fill=BOTH, expand=YES)
+        # Need to add button commands
+        #Use https://stackoverflow.com/questions/2261191/how-can-i-put-2-buttons-next-to-each-other to pack buttons
+        Label(self, text="Is this the image you would like to watermark?").pack(side=BOTTOM)
+        Button(self, text="Yes", command=None).pack(side=BOTTOM)
+        Button(self, text="No", command=None).pack(side=BOTTOM)
+        # Need to refit all widgets so that they are in grid instead of pack
+        # Geometry setting must happen at the end
 
-        
+
+class CheckWaterMarkFrame(Frame):
+    def __init__(self, master, image):
+        Frame.__init__(self, master)
         
 
 class SaveImageFrame(Frame):
