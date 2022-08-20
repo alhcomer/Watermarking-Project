@@ -68,9 +68,10 @@ class CheckImageFrame(Frame):
         Label(self, image=image).pack(fill=BOTH, expand=YES)
         # Need to add button commands
         #Use https://stackoverflow.com/questions/2261191/how-can-i-put-2-buttons-next-to-each-other to pack buttons
-        Label(self, text="Is this the image you would like to watermark?").pack(side=BOTTOM)
-        Button(self, text="Yes", command=None).pack(side=BOTTOM)
         Button(self, text="No", command=None).pack(side=BOTTOM)
+        Button(self, text="Yes", command=None).pack(side=BOTTOM)
+        Label(self, text="Is this the image you would like to watermark?").pack(side=BOTTOM)
+
         # Need to refit all widgets so that they are in grid instead of pack
         # Geometry setting must happen at the end
 
