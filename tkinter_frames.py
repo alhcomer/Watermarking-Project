@@ -106,7 +106,7 @@ class CheckImageFrame(Frame):
 
     def _watermark_image(self):
         watermark_image = ImageTk.getimage(self.image)
-        draw = ImageDraw.Draw(img_to_wm)
+        draw = ImageDraw.Draw(watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
         draw.text((0, 0), self.water_mark_text, (0, 0, 0), font=font)
         plt.subplot(1, 2, 1)
