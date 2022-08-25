@@ -35,7 +35,12 @@ class WaterMarkGenerator(Tk):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.grid(column=1, row=0)
+        self._frame.grid(column=0, row=0)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        # TODO: Need to make above widgets centered 
+        # https://stackoverflow.com/questions/14946963/tkinter-grid-how-to-position-widgets-so-they-are-not-stuck-together 
+        # above link may help
         
 
 class MainFrame(Frame):
