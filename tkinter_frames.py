@@ -2,9 +2,10 @@ from cProfile import label
 from doctest import master
 from logging import root
 from operator import mod
+from sqlite3 import Row
 from tkinter.messagebox import YES
 from PIL import Image, ImageTk, ImageDraw, ImageFont
-from tkinter import BOTH, BOTTOM, CENTER, LEFT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas, Text
+from tkinter import BOTH, BOTTOM, CENTER, LEFT, RIGHT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas, Text
 from tkinter.ttk import Frame, Label
 import matplotlib.pyplot as plt
 import pyautogui
@@ -34,15 +35,15 @@ class WaterMarkGenerator(Tk):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.pack()
+        self._frame.grid(column=1, row=0)
         
 
 class MainFrame(Frame):
     def __init__(self, master, image):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
-        Label(self, text="Please upload an image to watermark.").pack(pady=30)
-        Button(self, text='Upload a File', command=self._open_file).pack(expand=True)
+        Label(self, text="Please upload an image to watermark.").grid(row=0, column=1)
+        Button(self, text='Upload a File', command=self._open_file).grid(row=1, column=1)
 
     def _open_file(self):
         self.file_path = filedialog.askopenfilename(
@@ -78,33 +79,35 @@ class CheckImageFrame(Frame):
         self.image = image
         image_width = self.image.width()
         image_height = self.image.height()
-        print(image_width, image_height)
-        self.master.geometry(f"{image_width + 20}x{image_height + 70}")
-        Label(self, image=image).pack(fill=BOTH, expand=YES)
+        self.master.geometry(f"{image_width + 100}x{image_height + 150}")
+        Label(self, image=image).grid(column=1, row=0)
         # Need to add button commands
         #Use https://stackoverflow.com/questions/2261191/how-can-i-put-2-buttons-next-to-each-other to pack buttons
-        Button(self, text="No", command=None).pack(side=BOTTOM)
-        Button(self, text="Yes", command=self._choose_watermark).pack(side=BOTTOM)
-        Label(self, text="Is this the image you would like to watermark?").pack(side=BOTTOM)
+        Label(self, text="Is this the image you would like to watermark?").grid(column=1, row=1)
+        self.button_frame = Frame(master=master)
+        Button(self.button_frame, text="No", command=None).grid(column=0, row=0)
+        Button(self.button_frame, text="Yes", command=self._choose_watermark).grid(column=1, row=0)
+        self.button_frame.grid(column=1, row=2)
+
 
         # Need to refit all widgets so that they are in grid instead of pack
         # Geometry setting must happen at the end
 
     def _choose_watermark(self):
-        window = Toplevel()
-        label = Label(window, text="What text would you like to watermark the image with?")
+        self.window = Toplevel()
+        label = Label(self.window, text="What text would you like to watermark the image with?")
         label.grid(row=0, column=0)
-        label2 = Label(window, text="Text must be under 10 characters ")
+        label2 = Label(self.window, text="Text must be under 10 characters ")
         label2.grid(row=1, column=0)
-        text_box = Text(window, height=1, width=20)
+        text_box = Text(self.window, height=1, width=20)
         text_box.grid(row=2, column=0)
         # TODO: need to set text limitations on text box
         # TODO: add font choice drop down box
-        Button(window, text="Ok.", command=self._watermark_image).grid(row=3, column=0)
+        Button(self.window, text="Ok.", command=self._watermark_image).grid(row=3, column=0)
         self.water_mark_text = text_box.get("1.0", "end")
-        window.destroy()
 
     def _watermark_image(self):
+        self.window.destroy()
         watermark_image = ImageTk.getimage(self.image)
         draw = ImageDraw.Draw(watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
@@ -112,8 +115,7 @@ class CheckImageFrame(Frame):
         plt.subplot(1, 2, 1)
         plt.title("black text")
         plt.imshow(watermark_image)
-        # img.show()
-
+        self.master.switch_frame(CheckWaterMarkFrame, image=watermark_image)
 
 class CheckWaterMarkFrame(Frame):
     def __init__(self, master, image):
