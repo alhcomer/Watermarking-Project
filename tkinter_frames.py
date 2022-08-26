@@ -90,9 +90,9 @@ class CheckImageFrame(Frame):
         #Use https://stackoverflow.com/questions/2261191/how-can-i-put-2-buttons-next-to-each-other to pack buttons
         Label(self, text="Is this the image you would like to watermark?").grid(column=1, row=1)
         self.button_frame = Frame(master=master)
-        Button(self.button_frame, text="No", command=None).grid(column=0, row=0)
-        Button(self.button_frame, text="Yes", command=self._choose_watermark).grid(column=1, row=0)
-        self.button_frame.grid(column=1, row=2)
+        Button(self.button_frame, text="Yes", command=self._choose_watermark).grid(column=0, row=0, padx=10)
+        Button(self.button_frame, text="No", command=None).grid(column=1, row=0, padx=10)
+        self.button_frame.grid(column=0, row=2, pady=10)
 
 
         # Need to refit all widgets so that they are in grid instead of pack
