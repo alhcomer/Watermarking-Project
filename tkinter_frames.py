@@ -38,9 +38,6 @@ class WaterMarkGenerator(Tk):
         self._frame.grid(column=0, row=0)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        # TODO: Need to make above widgets centered 
-        # https://stackoverflow.com/questions/14946963/tkinter-grid-how-to-position-widgets-so-they-are-not-stuck-together 
-        # above link may help
         
 
 class MainFrame(Frame):
@@ -85,18 +82,16 @@ class CheckImageFrame(Frame):
         image_width = self.image.width()
         image_height = self.image.height()
         self.master.geometry(f"{image_width + 100}x{image_height + 150}")
-        Label(self, image=image).grid(column=1, row=0)
-        # Need to add button commands
-        #Use https://stackoverflow.com/questions/2261191/how-can-i-put-2-buttons-next-to-each-other to pack buttons
-        Label(self, text="Is this the image you would like to watermark?").grid(column=1, row=1)
-        self.button_frame = Frame(master=master)
+        Label(self, image=image).grid(column=0, row=0)
+        # TODO: Need to add button commands
+        Label(self, text="Is this the image you would like to watermark?").grid(column=0, row=1)
+        self.button_frame = Frame(master=self)
         Button(self.button_frame, text="Yes", command=self._choose_watermark).grid(column=0, row=0, padx=10)
-        Button(self.button_frame, text="No", command=None).grid(column=1, row=0, padx=10)
+        Button(self.button_frame, text="No", command=self._to_first_frame).grid(column=1, row=0, padx=10)
         self.button_frame.grid(column=0, row=2, pady=10)
 
-
-        # Need to refit all widgets so that they are in grid instead of pack
-        # Geometry setting must happen at the end
+    def _to_first_frame(self):
+        self.master.switch_frame(MainFrame)
 
     def _choose_watermark(self):
         self.window = Toplevel()
@@ -106,14 +101,14 @@ class CheckImageFrame(Frame):
         label2.grid(row=1, column=0)
         text_box = Text(self.window, height=1, width=20)
         text_box.grid(row=2, column=0)
-        # TODO: need to set text limitations on text box
+        # TODO: need to set text valdators on text box
         # TODO: add font choice drop down box
         Button(self.window, text="Ok.", command=self._watermark_image).grid(row=3, column=0)
         self.water_mark_text = text_box.get("1.0", "end")
 
     def _watermark_image(self):
         self.window.destroy()
-        watermark_image = ImageTk.getimage(self.image)
+        watermark_image = ImageTk.getimage(self.image).copy()
         draw = ImageDraw.Draw(watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
         draw.text((0, 0), self.water_mark_text, (0, 0, 0), font=font)
@@ -125,13 +120,19 @@ class CheckImageFrame(Frame):
 class CheckWaterMarkFrame(Frame):
     def __init__(self, master, image):
         Frame.__init__(self, master)
+        self.image = image
+        print("checkwatermarkframe")
+        self.tkinter_image = ImageTk.PhotoImage(self.image)
+        Label(self, image=self.tkinter_image).grid(column=1, row=0)
+        # TODO: need to make buttons from previous frame delete
+        # TODO: need to watermark image properly
         
 
 class SaveImageFrame(Frame):
     def __init__(self, master, image):
         Frame.__init__(self, master)
         
-# NEED TO GO THROUGH AND REMOVE UNNECESSARY SELF REFERENCES
+# TODO: go through and delete unnecessary self references
 
                 
             
