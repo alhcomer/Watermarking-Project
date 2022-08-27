@@ -1,5 +1,6 @@
 from cProfile import label
 from doctest import master
+from email.mime import image
 from logging import root
 from operator import mod
 from sqlite3 import Row
@@ -29,9 +30,9 @@ class WaterMarkGenerator(Tk):
         self.switch_frame(MainFrame)
         self.geometry('900x500')
 
-    def switch_frame(self, frame_class, image=None):
+    def switch_frame(self, frame_class, image=None, text=None):
         # Destroys the current frame and replaces it with a new frame
-        new_frame = frame_class(self, image)
+        new_frame = frame_class(self, image, text)
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
@@ -41,7 +42,7 @@ class WaterMarkGenerator(Tk):
         
 
 class MainFrame(Frame):
-    def __init__(self, master, image):
+    def __init__(self, master, image, text):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
         Label(self, text="Please upload an image to watermark.").grid(row=0, column=1)
@@ -74,7 +75,7 @@ class MainFrame(Frame):
 
 
 class CheckImageFrame(Frame):
-    def __init__(self, master, image):
+    def __init__(self, master, image, text):
         Frame.__init__(self, master)
         # TODO: scale down image size if greater than screen resolution
         self.image = image
@@ -88,10 +89,10 @@ class CheckImageFrame(Frame):
         Button(self.button_frame, text="No", command=self._to_first_frame).grid(column=1, row=0, padx=10)
         self.button_frame.grid(column=0, row=2, pady=10)
 
-    def _to_first_frame(self):
-        self.master.switch_frame(MainFrame)
-
     def _choose_watermark(self):
+        # TODO: pressing Enter deletes the text in text_box instead of serving as Ok button
+        # TODO: need to set text validators on text box
+        # TODO: add font choice drop down box
         self.window = Toplevel()
         label = Label(self.window, text="What text would you like to watermark the image with?")
         label.grid(row=0, column=0, padx=10)
@@ -99,43 +100,46 @@ class CheckImageFrame(Frame):
         label2.grid(row=1, column=0, padx=10)
         text_box = Text(self.window, height=1, width=20)
         text_box.grid(row=2, column=0, padx=10)
-        # TODO: pressing Enter deletes the text in text_box instead of serving as Ok button
-        # TODO: need to set text validators on text box
-        # TODO: add font choice drop down box
-        Button(self.window, text="Ok.", command=self._watermark_image).grid(row=3, column=0, padx=10)
         self.water_mark_text = text_box.get("1.0", "end")
+        Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
 
-    def _watermark_image(self):
+    def _to_first_frame(self):
+        self.master.switch_frame(MainFrame)
+        
+    def _to_check_wm(self):
         self.window.destroy()
+        self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
+        
+  
+
+class CheckWaterMarkFrame(Frame):
+    def __init__(self, master, image, text):
+        Frame.__init__(self, master)
+        self.text = text
+        self.image = image
+        self.watermark_image()
+        print("checkwatermarkframe")
+        Label(self, image=self.image).grid(column=1, row=0)
+        # TODO: need to watermark image properly
+
+    def watermark_image(self):
         watermark_image = ImageTk.getimage(self.image).copy()
         draw = ImageDraw.Draw(watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
-        draw.text((0, 0), self.water_mark_text, (0, 0, 0), font=font)
+        draw.text((0, 0), self.text, (0, 0, 0), font=font)
         plt.subplot(1, 2, 1)
         plt.title("black text")
         plt.imshow(watermark_image)
-        self.master.switch_frame(CheckWaterMarkFrame, image=watermark_image)
-
-class CheckWaterMarkFrame(Frame):
-    def __init__(self, master, image):
-        Frame.__init__(self, master)
-        self.image = image
-        print("checkwatermarkframe")
-        self.tkinter_image = ImageTk.PhotoImage(self.image)
-        Label(self, image=self.tkinter_image).grid(column=1, row=0)
-        # TODO: need to make buttons from previous frame delete
-        # TODO: need to watermark image properly
-
-    # TODO: _watermark_image should be refactored to be in the CheckWaterMarkFrame 
-    # so that unmarked image is available to the CheckWaterMarkFrame class
+        watermark_image.open()
+        return watermark_image
 
     def _back_to_check_image(self):
-        # TODO: w
+        # TODO: 
         pass
         
 
 class SaveImageFrame(Frame):
-    def __init__(self, master, image):
+    def __init__(self, master, image, text):
         Frame.__init__(self, master)
         
 # TODO: go through and delete unnecessary self references
