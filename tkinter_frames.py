@@ -6,7 +6,7 @@ from operator import mod
 from sqlite3 import Row
 from tkinter.messagebox import YES
 from PIL import Image, ImageTk, ImageDraw, ImageFont
-from tkinter import BOTH, BOTTOM, CENTER, LEFT, RIGHT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas, Text
+from tkinter import BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas, Text
 from tkinter.ttk import Frame, Label
 import matplotlib.pyplot as plt
 import pyautogui
@@ -98,15 +98,16 @@ class CheckImageFrame(Frame):
         label.grid(row=0, column=0, padx=10)
         label2 = Label(self.window, text="Text must be under 10 characters ")
         label2.grid(row=1, column=0, padx=10)
-        text_box = Text(self.window, height=1, width=20)
-        text_box.grid(row=2, column=0, padx=10)
-        self.water_mark_text = text_box.get("1.0", "end")
+        self.text_box = Text(self.window, height=1, width=20)
+        self.text_box.grid(row=2, column=0, padx=10)
+        
         Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
         
     def _to_check_wm(self):
+        self.water_mark_text = self.text_box.get(1.0, END)
         self.window.destroy()
         self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
         
@@ -118,24 +119,24 @@ class CheckWaterMarkFrame(Frame):
         self.text = text
         self.image = image
         self.watermark_image()
-        print("checkwatermarkframe")
         Label(self, image=self.image).grid(column=1, row=0)
         # TODO: need to watermark image properly
 
     def watermark_image(self):
-        watermark_image = ImageTk.getimage(self.image).copy()
-        draw = ImageDraw.Draw(watermark_image)
+        self.watermark_image = ImageTk.getimage(self.image).copy()
+        print(self.text)
+        draw = ImageDraw.Draw(self.watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
-        draw.text((0, 0), self.text, (0, 0, 0), font=font)
+        draw.text((0, 0), self.text,
+        (0, 0, 0), font=font)
         plt.subplot(1, 2, 1)
         plt.title("black text")
-        plt.imshow(watermark_image)
-        watermark_image.open()
-        return watermark_image
+        plt.imshow(self.watermark_image)
+        plt.show()
+        return self.watermark_image
 
     def _back_to_check_image(self):
-        # TODO: 
-        pass
+        self.master.switch_frame(CheckImageFrame, image=self.image)
         
 
 class SaveImageFrame(Frame):
@@ -143,6 +144,6 @@ class SaveImageFrame(Frame):
         Frame.__init__(self, master)
         
 # TODO: go through and delete unnecessary self references
-
-                
-            
+# TODO: go through button commands and make them lambda expressions
+# example of doing so in answer here:
+# https://stackoverflow.com/questions/14824163/how-to-get-the-input-from-the-tkinter-text-widget
