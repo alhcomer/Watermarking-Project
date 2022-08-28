@@ -5,7 +5,7 @@ from logging import root
 from operator import mod
 from sqlite3 import Row
 from tkinter.messagebox import YES
-from PIL import Image, ImageTk, ImageDraw, ImageFont
+from PIL import Image, ImageTk, ImageDraw, ImageFont, ImageOps
 from tkinter import BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas, Text
 from tkinter.ttk import Frame, Label
 import matplotlib.pyplot as plt
@@ -123,12 +123,15 @@ class CheckWaterMarkFrame(Frame):
         # TODO: need to watermark image properly
 
     def watermark_image(self):
+        # use https://stackoverflow.com/questions/245447/how-do-i-draw-text-at-an-angle-using-pythons-pil
+        # to rotate image
         self.watermark_image = ImageTk.getimage(self.image).copy()
-        print(self.text)
-        draw = ImageDraw.Draw(self.watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
-        draw.text((0, 0), self.text,
-        (0, 0, 0), font=font)
+        wm_text = Image.new('L', (500, 50))
+        draw = ImageDraw.Draw(wm_text)
+        draw.text((0, 0), self.text, font=font, fill=255)
+        w = wm_text.rotate(17.5, expand=1)
+        self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (242,60),  w)
         plt.subplot(1, 2, 1)
         plt.title("black text")
         plt.imshow(self.watermark_image)
