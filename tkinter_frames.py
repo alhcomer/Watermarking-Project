@@ -99,7 +99,7 @@ class CheckImageFrame(Frame):
         label2 = Label(self.window, text="Text must be under 10 characters ")
         label2.grid(row=1, column=0, padx=10)
         self.text_box = Text(self.window, height=1, width=20)
-        self.text_box.grid(row=2, column=0, padx=10)
+        self.text_box.grid(row=2, column=0, padx=10) 
         
         Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
 
@@ -111,20 +111,25 @@ class CheckImageFrame(Frame):
         self.window.destroy()
         self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
         
-  
 
 class CheckWaterMarkFrame(Frame):
     def __init__(self, master, image, text):
         Frame.__init__(self, master)
         self.text = text
         self.image = image
-        self.watermark_image()
-        Label(self, image=self.image).grid(column=1, row=0)
-        # TODO: need to watermark image properly
+        self.watermark_image = self.watermark_image()
+        Label(self, image=self.image).grid(column=0, row=0)
+        Label(self, text="Is this image watermarked how you would like?").grid(column=0, row=1)
+        self.button_frame = Frame(master=self)
+        Button(self.button_frame, text="Yes", command=self._download_image).grid(column=0, row=0, padx=10)
+        Button(self.button_frame, text="No", command=None).grid(column=1, row=0, padx=10)
+        self.button_frame.grid(column=0, row=2)
+        
 
     def watermark_image(self):
-        # use https://stackoverflow.com/questions/245447/how-do-i-draw-text-at-an-angle-using-pythons-pil
-        # to rotate image
+        # TODO: need to watermark image properly
+        # TODO: repeat watermark process in for loop so it repeats
+        # TODO: add colour options to the watermark generator
         self.watermark_image = ImageTk.getimage(self.image).copy()
         font = ImageFont.truetype("arial.ttf", 50)
         wm_text = Image.new('L', (500, 50))
@@ -132,20 +137,29 @@ class CheckWaterMarkFrame(Frame):
         draw.text((0, 0), self.text, font=font, fill=255)
         w = wm_text.rotate(17.5, expand=1)
         self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (242,60),  w)
-        plt.subplot(1, 2, 1)
-        plt.title("black text")
         plt.imshow(self.watermark_image)
         plt.show()
+        self.watermark_image = ImageTk.PhotoImage(self.watermark_image)
         return self.watermark_image
 
     def _back_to_check_image(self):
         self.master.switch_frame(CheckImageFrame, image=self.image)
+
+    def _download_image(self):
+        file = filedialog.asksaveasfile(mode='w', 
+        defaultextension='.jpg', filetypes=(
+                ('JPEG', '*.jpg'),
+                ('PNF', '*.png'),
+                ('All files', '*.*') 
+            ))
+        if not file:
+            return 
+        # TODO: convert pillow image to jpg
+        
+        file_to_save =  
         
 
-class SaveImageFrame(Frame):
-    def __init__(self, master, image, text):
-        Frame.__init__(self, master)
-        
+
 # TODO: go through and delete unnecessary self references
 # TODO: go through button commands and make them lambda expressions
 # example of doing so in answer here:
