@@ -93,6 +93,9 @@ class CheckImageFrame(Frame):
         # TODO: pressing Enter deletes the text in text_box instead of serving as Ok button
         # TODO: need to set text validators on text box
         # TODO: add font choice drop down box
+        # TODO: if yes is clicked while _choose_watermark window 
+        # is still open a second _choose_watermark window opens
+        # must be fixed
         self.window = Toplevel()
         label = Label(self.window, text="What text would you like to watermark the image with?")
         label.grid(row=0, column=0, padx=10)
@@ -117,8 +120,8 @@ class CheckWaterMarkFrame(Frame):
         Frame.__init__(self, master)
         self.text = text
         self.image = image
-        self.watermark_image = self.watermark_image()
-        Label(self, image=self.image).grid(column=0, row=0)
+        self.tk_watermark_image = self.watermark_image()
+        Label(self, image=self.tk_watermark_image).grid(column=0, row=0)
         Label(self, text="Is this image watermarked how you would like?").grid(column=0, row=1)
         self.button_frame = Frame(master=self)
         Button(self.button_frame, text="Yes", command=self._download_image).grid(column=0, row=0, padx=10)
@@ -130,16 +133,17 @@ class CheckWaterMarkFrame(Frame):
         # TODO: repeat watermark process in for loop so it repeats
         # TODO: add colour options to the watermark generator
         self.watermark_image = ImageTk.getimage(self.image).copy()
+        print(self.watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
         wm_text = Image.new('L', (500, 50))
         draw = ImageDraw.Draw(wm_text)
         draw.text((0, 0), self.text, font=font, fill=255)
-        w = wm_text.rotate(17.5, expand=1)
+        w = wm_text.rotate(45, expand=1)
         self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (242,60),  w)
         plt.imshow(self.watermark_image)
         plt.show()
-        self.watermark_image = ImageTk.PhotoImage(self.watermark_image)
-        return self.watermark_image
+        self.tk_watermark_image = ImageTk.PhotoImage(self.watermark_image)
+        return self.tk_watermark_image
 
     def _back_to_check_image(self):
         self.master.switch_frame(CheckImageFrame, image=self.image)
@@ -153,7 +157,8 @@ class CheckWaterMarkFrame(Frame):
             ))
         if not file:
             return 
-        self.watermark_image.save(file)
+        self.rgb_image = self.watermark_image.convert('RGB')
+        self.rgb_image.save(file)
 
 
 # TODO: go through and delete unnecessary self references
