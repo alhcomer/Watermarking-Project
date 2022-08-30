@@ -133,13 +133,18 @@ class CheckWaterMarkFrame(Frame):
         # TODO: repeat watermark process in for loop so it repeats
         # TODO: add colour options to the watermark generator
         self.watermark_image = ImageTk.getimage(self.image).copy()
-        print(self.watermark_image)
         font = ImageFont.truetype("arial.ttf", 50)
-        wm_text = Image.new('L', (500, 50))
+        wm_text = Image.new('L', (100, 100))
         draw = ImageDraw.Draw(wm_text)
         draw.text((0, 0), self.text, font=font, fill=255)
         w = wm_text.rotate(45, expand=1)
-        self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (242,60),  w)
+
+
+        image_width, image_height = self.watermark_image.size
+        for x in range(0, image_width, 150):
+            for y in range(0, image_height, 150):
+                self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (x, y),  w)
+
         plt.imshow(self.watermark_image)
         plt.show()
         self.tk_watermark_image = ImageTk.PhotoImage(self.watermark_image)
