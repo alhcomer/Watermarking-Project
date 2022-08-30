@@ -127,7 +127,6 @@ class CheckWaterMarkFrame(Frame):
         
 
     def watermark_image(self):
-        # TODO: need to watermark image properly
         # TODO: repeat watermark process in for loop so it repeats
         # TODO: add colour options to the watermark generator
         self.watermark_image = ImageTk.getimage(self.image).copy()
@@ -154,10 +153,7 @@ class CheckWaterMarkFrame(Frame):
             ))
         if not file:
             return 
-        # TODO: convert pillow image to jpg
-        
-        file_to_save =  
-        
+        self.watermark_image.save(file)
 
 
 # TODO: go through and delete unnecessary self references
