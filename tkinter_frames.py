@@ -103,7 +103,7 @@ class CheckImageFrame(Frame):
         label2.grid(row=1, column=0, padx=10)
         self.text_box = Text(self.window, height=1, width=20)
         self.text_box.grid(row=2, column=0, padx=10) 
-        
+        # TODO: handle case if user hasn't typed anything in and presses okay
         Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
 
     def _to_first_frame(self):
