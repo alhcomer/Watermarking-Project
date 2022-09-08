@@ -102,9 +102,14 @@ class CheckImageFrame(Frame):
         label2 = Label(self.window, text="Text must be under 10 characters ")
         label2.grid(row=1, column=0, padx=10)
         self.text_box = Text(self.window, height=1, width=20)
-        self.text_box.grid(row=2, column=0, padx=10) 
+        self.text_box.grid(row=2, column=0, padx=10)
         # TODO: handle case if user hasn't typed anything in and presses okay
-        Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
+        self.btn = Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
+        self.btn.bind('<Return>', lambda event=self._to_check_wm)
+        self.btn.focus()
+
+
+        
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
