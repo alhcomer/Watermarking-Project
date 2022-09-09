@@ -105,7 +105,7 @@ class CheckImageFrame(Frame):
         self.text_box.grid(row=2, column=0, padx=10)
         # TODO: handle case if user hasn't typed anything in and presses okay
         self.btn = Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
-        self.btn.bind('<Return>', lambda event=self._to_check_wm)
+        self.btn.bind('<Return>', event=self._to_check_wm)
         self.btn.focus()
 
 
