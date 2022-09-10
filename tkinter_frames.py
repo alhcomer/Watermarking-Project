@@ -16,8 +16,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 def error_window():
     window = Toplevel()
     window.wm_title("Error")
-    label = Label(window, text="Watermark Generator was unable to open that file. Ensure the file type is an image.")
-    label.grid(row=0, column=0)
+    Label(window, text="Watermark Generator was unable to open that file. Ensure the file type is an image.").grid(row=0, column=0)
     button = Button(window, text='Okay', command=window.destroy)
     button.grid(row=1, column=0)
     # TODO: should refactor above label widget making code to single function calls
