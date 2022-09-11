@@ -19,8 +19,6 @@ def error_window():
     Label(window, text="Watermark Generator was unable to open that file. Ensure the file type is an image.").grid(row=0, column=0)
     button = Button(window, text='Okay', command=window.destroy)
     button.grid(row=1, column=0)
-    # TODO: should refactor above label widget making code to single function calls
-
 
 class WaterMarkGenerator(Tk):
     def __init__(self):
@@ -134,7 +132,6 @@ class CheckWaterMarkFrame(Frame):
         
 
     def watermark_image(self):
-        # TODO: repeat watermark process in for loop so it repeats
         # TODO: add colour options to the watermark generator
         self.watermark_image = ImageTk.getimage(self.image).copy()
         font = ImageFont.truetype("arial.ttf", 50)
