@@ -21,6 +21,7 @@ def error_window():
     button.grid(row=1, column=0)
 
 class WaterMarkGenerator(Tk):
+    # TODO: add custom icon for top left of the window 
     def __init__(self):
         Tk.__init__(self)
         self._frame = None
@@ -56,25 +57,26 @@ class MainFrame(Frame):
         )
         if self.file_path is not None:
             try:
-                self.image = Image.open(self.file_path, mode='r')
-                self.tkinter_image = ImageTk.PhotoImage(self.image)
+                self.image = Image.open(self.file_path)
+                self.resized_image = self.resize_image(self.image)
+                self.tkinter_image = ImageTk.PhotoImage(self.resized_image)
                 self.master.switch_frame(CheckImageFrame, image=self.tkinter_image)
             except IOError:
                 error_window()
 
-    def _resize_image(self):
-        image_width, image_height = self.image.size()
-        if image_width > (SCREEN_WIDTH - 50) or image_height > (SCREEN_HEIGHT - 50):
-            width_difference = image_width - SCREEN_WIDTH
-            height_difference = image_width - SCREEN_HEIGHT
-            pass
-        # TODO: need to resize image so that both image_width and image_height are 50 less than SCREEN_WIDTH and SCREEN_HEIGHT
+    def resize_image(self, image):
+        image_width, image_height = image.size
+        print(image_width, image_height)
+        if image_width > (SCREEN_WIDTH - 100) or image_height > (SCREEN_HEIGHT - 100):
+            image = image.resize((image_width - 500, image_height - 500))
+            # TODO: improve efficiency of resizing method
+            image = self.resize_image(image)
+        return image
 
 
 class CheckImageFrame(Frame):
     def __init__(self, master, image, text):
         Frame.__init__(self, master)
-        # TODO: scale down image size if greater than screen resolution
         self.image = image
         image_width = self.image.width()
         image_height = self.image.height()
@@ -105,8 +107,6 @@ class CheckImageFrame(Frame):
         self.btn.bind('<Return>', event=self._to_check_wm)
         self.btn.focus()
 
-
-        
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
