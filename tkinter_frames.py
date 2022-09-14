@@ -4,12 +4,14 @@ from email.mime import image
 from logging import root
 from operator import mod
 from sqlite3 import Row
+from tkinter import (BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, Canvas,
+                     PhotoImage, Text, Tk, Toplevel, filedialog)
 from tkinter.messagebox import YES
-from PIL import Image, ImageTk, ImageDraw, ImageFont, ImageOps
-from tkinter import BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, PhotoImage, Tk, Toplevel, filedialog, Canvas, Text
 from tkinter.ttk import Frame, Label
+
 import matplotlib.pyplot as plt
 import pyautogui
+from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageTk
 
 SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 
@@ -103,8 +105,9 @@ class CheckImageFrame(Frame):
         self.text_box = Text(self.window, height=1, width=20)
         self.text_box.grid(row=2, column=0, padx=10)
         # TODO: handle case if user hasn't typed anything in and presses okay
-        self.btn = Button(self.window, text="Ok.", command=self._to_check_wm).grid(row=3, column=0, padx=10)
-        self.btn.bind('<Return>', event=self._to_check_wm)
+        self.btn = Button(self.window, text="Ok.", command=self._to_check_wm)
+        self.btn.grid(row=3, column=0, padx=10)
+        self.btn.bind('<Return>', self._to_check_wm)
         self.btn.focus()
 
 
