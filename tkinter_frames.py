@@ -8,7 +8,6 @@ from tkinter import (BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, Canvas,
                      PhotoImage, Text, Tk, Toplevel, filedialog)
 from tkinter.messagebox import YES
 from tkinter.ttk import Frame, Label
-
 import matplotlib.pyplot as plt
 import pyautogui
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageTk
@@ -26,6 +25,7 @@ class WaterMarkGenerator(Tk):
     # TODO: add custom icon for top left of the window 
     def __init__(self):
         Tk.__init__(self)
+        self.iconbitmap("icons\wm.ico")
         self._frame = None
         self.switch_frame(MainFrame)
         self.geometry('900x500')
