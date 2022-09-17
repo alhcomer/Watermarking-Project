@@ -3,6 +3,7 @@ from doctest import master
 from email.mime import image
 from logging import root
 from operator import mod
+import re
 from sqlite3 import Row
 from tkinter import (BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, Canvas,
                      PhotoImage, Text, Tk, Toplevel, filedialog)
@@ -22,7 +23,6 @@ def error_window():
     button.grid(row=1, column=0)
 
 class WaterMarkGenerator(Tk):
-    # TODO: add custom icon for top left of the window 
     def __init__(self):
         Tk.__init__(self)
         self.iconbitmap("icons\wm.ico")
@@ -116,9 +116,12 @@ class CheckImageFrame(Frame):
         
     def _to_check_wm(self):
         self.water_mark_text = self.text_box.get(1.0, END)
-        self.window.destroy()
-        self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
-        
+        if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip()
+            self.window.destroy()
+            self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
+        else:
+            pass
+            
 
 class CheckWaterMarkFrame(Frame):
     def __init__(self, master, image, text):

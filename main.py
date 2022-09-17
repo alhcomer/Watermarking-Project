@@ -1,5 +1,4 @@
 from tkinter_frames import WaterMarkGenerator
-from tkinter import Menu, Frame, Label, Toplevel
 from tkinter_frames import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
