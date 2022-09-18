@@ -104,7 +104,6 @@ class CheckImageFrame(Frame):
         label2.grid(row=1, column=0, padx=10)
         self.text_box = Text(self.window, height=1, width=20)
         self.text_box.grid(row=2, column=0, padx=10)
-        # TODO: handle case if user hasn't typed anything in and presses okay
         self.btn = Button(self.window, text="Ok.", command=self._to_check_wm)
         self.btn.grid(row=3, column=0, padx=10)
         self.btn.bind('<Return>', self._to_check_wm)
@@ -116,7 +115,7 @@ class CheckImageFrame(Frame):
         
     def _to_check_wm(self):
         self.water_mark_text = self.text_box.get(1.0, END)
-        if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip()
+        if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip():
             self.window.destroy()
             self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
         else:
