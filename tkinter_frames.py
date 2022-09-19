@@ -82,6 +82,7 @@ class CheckImageFrame(Frame):
         self.image = image
         image_width = self.image.width()
         image_height = self.image.height()
+        self.toplevel = None
         self.master.geometry(f"{image_width + 100}x{image_height + 150}")
         Label(self, image=image).grid(column=0, row=0)
         Label(self, text="Is this the image you would like to watermark?").grid(column=0, row=1)
@@ -91,22 +92,19 @@ class CheckImageFrame(Frame):
         self.button_frame.grid(column=0, row=2, pady=10)
 
     def _choose_watermark(self):
-        # TODO: pressing Enter deletes the text in text_box instead of serving as Ok button
         # TODO: need to set text validators on text box
         # TODO: add font choice drop down box
-        # TODO: if yes is clicked while _choose_watermark window 
-        # is still open a second _choose_watermark window opens
-        # must be fixed
-        self.window = Toplevel()
-        label = Label(self.window, text="What text would you like to watermark the image with?")
-        label.grid(row=0, column=0, padx=10)
-        label2 = Label(self.window, text="Text must be under 10 characters ")
-        label2.grid(row=1, column=0, padx=10)
-        self.text_box = Text(self.window, height=1, width=20)
-        self.text_box.grid(row=2, column=0, padx=10)
-        self.btn = Button(self.window, text="Ok.", command=self._to_check_wm)
-        self.btn.grid(row=3, column=0, padx=10)
-        self.window.bind('<Return>', lambda event: self._to_check_wm())
+        if self.toplevel == None:
+            self.toplevel = Toplevel()
+            label = Label(self.toplevel, text="What text would you like to watermark the image with?")
+            label.grid(row=0, column=0, padx=10)
+            label2 = Label(self.toplevel, text="Text must be under 10 characters ")
+            label2.grid(row=1, column=0, padx=10)
+            self.text_box = Text(self.toplevel, height=1, width=20)
+            self.text_box.grid(row=2, column=0, padx=10)
+            self.btn = Button(self.toplevel, text="Ok.", command=self._to_check_wm)
+            self.btn.grid(row=3, column=0, padx=10)
+            self.toplevel.bind('<Return>', lambda event: self._to_check_wm())
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
