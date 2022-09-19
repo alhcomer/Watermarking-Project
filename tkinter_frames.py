@@ -106,9 +106,7 @@ class CheckImageFrame(Frame):
         self.text_box.grid(row=2, column=0, padx=10)
         self.btn = Button(self.window, text="Ok.", command=self._to_check_wm)
         self.btn.grid(row=3, column=0, padx=10)
-        self.btn.bind('<Return>', self._to_check_wm)
-        self.btn.focus()
-
+        self.window.bind('<Return>', lambda event: self._to_check_wm())
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
