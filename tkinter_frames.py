@@ -5,8 +5,8 @@ from logging import root
 from operator import mod
 import re
 from sqlite3 import Row
-from tkinter import (BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, Canvas,
-                     PhotoImage, Text, Tk, Toplevel, filedialog)
+from tkinter import (BOTH, BOTTOM, CENTER, END, LEFT, RIGHT, Button, Canvas, OptionMenu,
+                     PhotoImage, StringVar, Text, Tk, Toplevel, filedialog)
 from tkinter.messagebox import YES
 from tkinter.ttk import Frame, Label
 import matplotlib.pyplot as plt
@@ -92,7 +92,13 @@ class CheckImageFrame(Frame):
         self.button_frame.grid(column=0, row=2, pady=10)
 
     def _choose_watermark(self):
-        # TODO: add font choice drop down box
+        # TODO: add font choice drop down box - low priority
+        # TODO: add colour options to the watermark generator
+
+        font_options = [
+            
+        ]
+
         if self.toplevel == None:
             self.toplevel = Toplevel()
             label = Label(self.toplevel, text="What text would you like to watermark the image with?")
@@ -125,12 +131,11 @@ class CheckWaterMarkFrame(Frame):
         Label(self, text="Is this image watermarked how you would like?").grid(column=0, row=1)
         self.button_frame = Frame(master=self)
         Button(self.button_frame, text="Yes", command=self._download_image).grid(column=0, row=0, padx=10)
-        Button(self.button_frame, text="No", command=None).grid(column=1, row=0, padx=10)
+        Button(self.button_frame, text="No", command=self._back_to_check_image).grid(column=1, row=0, padx=10)
         self.button_frame.grid(column=0, row=2)
         
 
     def watermark_image(self):
-        # TODO: add colour options to the watermark generator
         self.watermark_image = ImageTk.getimage(self.image).copy()
         font = ImageFont.truetype("arial.ttf", 50)
         wm_text = Image.new('L', (100, 100))
