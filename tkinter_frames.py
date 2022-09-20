@@ -78,6 +78,11 @@ class MainFrame(Frame):
 
 class CheckImageFrame(Frame):
     def __init__(self, master, image, text):
+        self.font_options = {
+            "Oswald-Light": "fonts\Oswald-Light.ttf",
+            "Pacifico": "fonts\Pacifico.ttf",
+            "Raleway-Black": "fonts\Raleway-Black.ttf",
+        }
         Frame.__init__(self, master)
         self.image = image
         image_width = self.image.width()
@@ -95,11 +100,7 @@ class CheckImageFrame(Frame):
         # TODO: add font choice drop down box - low priority
         # TODO: add colour options to the watermark generator
 
-        font_options = [
-            "fonts\Oswald-Light.ttf",
-            "fonts\Pacifico.ttf",
-            "fonts\Raleway-Black.ttf",
-        ]
+        
 
         if self.toplevel == None:
             self.toplevel = Toplevel()
@@ -110,8 +111,8 @@ class CheckImageFrame(Frame):
             self.text_box = Text(self.toplevel, height=1, width=20)
             self.text_box.grid(row=2, column=0, padx=20)
             self.variable = StringVar(self.toplevel)
-            self.variable.set(font_options[0])
-            self.font_select = OptionMenu(self.toplevel, self.variable, font_options)
+            self.variable.set(list(self.font_options.keys())[0])
+            self.font_select = OptionMenu(self.toplevel, self.variable, *list(self.font_options.keys()))
             self.font_select.grid(row=3, column=0, padx=20)
             self.btn = Button(self.toplevel, text="Ok.", command=self._to_check_wm)
             self.btn.grid(row=4, column=0, padx=20)
@@ -121,7 +122,8 @@ class CheckImageFrame(Frame):
         self.master.switch_frame(MainFrame)
         
     def _to_check_wm(self):
-        self.chosen_font = self.variable.get()
+        self.chosen_font = self.font_options[self.variable.get()]
+        print(self.chosen_font)
         self.water_mark_text = self.text_box.get(1.0, END)
         if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip():
             self.toplevel.destroy()
