@@ -92,7 +92,6 @@ class CheckImageFrame(Frame):
         self.button_frame.grid(column=0, row=2, pady=10)
 
     def _choose_watermark(self):
-        # TODO: need to set text validators on text box
         # TODO: add font choice drop down box
         if self.toplevel == None:
             self.toplevel = Toplevel()
@@ -112,10 +111,8 @@ class CheckImageFrame(Frame):
     def _to_check_wm(self):
         self.water_mark_text = self.text_box.get(1.0, END)
         if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip():
-            self.window.destroy()
+            self.toplevel.destroy()
             self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
-        else:
-            pass
             
 
 class CheckWaterMarkFrame(Frame):
