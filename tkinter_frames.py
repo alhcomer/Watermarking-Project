@@ -30,9 +30,9 @@ class WaterMarkGenerator(Tk):
         self.switch_frame(MainFrame)
         self.geometry('900x500')
 
-    def switch_frame(self, frame_class, image=None, text=None):
+    def switch_frame(self, frame_class, image=None, text=None, font=None):
         # Destroys the current frame and replaces it with a new frame
-        new_frame = frame_class(self, image, text)
+        new_frame = frame_class(self, image, text, font)
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
@@ -42,7 +42,7 @@ class WaterMarkGenerator(Tk):
         
 
 class MainFrame(Frame):
-    def __init__(self, master, image, text):
+    def __init__(self, master, image, text, font):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
         Label(self, text="Please upload an image to watermark.").grid(row=0, column=1)
@@ -77,7 +77,7 @@ class MainFrame(Frame):
 
 
 class CheckImageFrame(Frame):
-    def __init__(self, master, image, text):
+    def __init__(self, master, image, text, font):
         self.font_options = {
             "Oswald-Light": "fonts\Oswald-Light.ttf",
             "Pacifico": "fonts\Pacifico.ttf",
@@ -127,14 +127,15 @@ class CheckImageFrame(Frame):
         self.water_mark_text = self.text_box.get(1.0, END)
         if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip():
             self.toplevel.destroy()
-            self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text)
+            self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text, font=self.chosen_font)
             
 
 class CheckWaterMarkFrame(Frame):
-    def __init__(self, master, image, text):
+    def __init__(self, master, image, text, font):
         Frame.__init__(self, master)
-        self.text = text
         self.image = image
+        self.text = text
+        self.font = font
         self.tk_watermark_image = self.watermark_image()
         Label(self, image=self.tk_watermark_image).grid(column=0, row=0)
         Label(self, text="Is this image watermarked how you would like?").grid(column=0, row=1)
@@ -146,7 +147,7 @@ class CheckWaterMarkFrame(Frame):
 
     def watermark_image(self):
         self.watermark_image = ImageTk.getimage(self.image).copy()
-        font = ImageFont.truetype("arial.ttf", 50)
+        font = ImageFont.truetype(f"{self.font}", 50)
         wm_text = Image.new('L', (100, 100))
         draw = ImageDraw.Draw(wm_text)
         draw.text((0, 0), self.text, font=font, fill=255)
