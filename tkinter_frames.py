@@ -96,25 +96,32 @@ class CheckImageFrame(Frame):
         # TODO: add colour options to the watermark generator
 
         font_options = [
-            
+            "fonts\Oswald-Light.ttf",
+            "fonts\Pacifico.ttf",
+            "fonts\Raleway-Black.ttf",
         ]
 
         if self.toplevel == None:
             self.toplevel = Toplevel()
             label = Label(self.toplevel, text="What text would you like to watermark the image with?")
-            label.grid(row=0, column=0, padx=10)
+            label.grid(row=0, column=0, padx=20)
             label2 = Label(self.toplevel, text="Text must be under 10 characters ")
             label2.grid(row=1, column=0, padx=10)
             self.text_box = Text(self.toplevel, height=1, width=20)
-            self.text_box.grid(row=2, column=0, padx=10)
+            self.text_box.grid(row=2, column=0, padx=20)
+            self.variable = StringVar(self.toplevel)
+            self.variable.set(font_options[0])
+            self.font_select = OptionMenu(self.toplevel, self.variable, font_options)
+            self.font_select.grid(row=3, column=0, padx=20)
             self.btn = Button(self.toplevel, text="Ok.", command=self._to_check_wm)
-            self.btn.grid(row=3, column=0, padx=10)
+            self.btn.grid(row=4, column=0, padx=20)
             self.toplevel.bind('<Return>', lambda event: self._to_check_wm())
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
         
     def _to_check_wm(self):
+        self.chosen_font = self.variable.get()
         self.water_mark_text = self.text_box.get(1.0, END)
         if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip():
             self.toplevel.destroy()
