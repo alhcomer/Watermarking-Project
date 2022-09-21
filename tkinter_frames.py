@@ -12,6 +12,7 @@ from tkinter.ttk import Frame, Label
 import matplotlib.pyplot as plt
 import pyautogui
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageTk
+from tkinter.colorchooser import askcolor
 
 SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 
@@ -30,9 +31,9 @@ class WaterMarkGenerator(Tk):
         self.switch_frame(MainFrame)
         self.geometry('900x500')
 
-    def switch_frame(self, frame_class, image=None, text=None, font=None):
+    def switch_frame(self, frame_class, image=None, text=None, font=None, colour=None):
         # Destroys the current frame and replaces it with a new frame
-        new_frame = frame_class(self, image, text, font)
+        new_frame = frame_class(self, image, text, font, colour)
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
@@ -42,7 +43,7 @@ class WaterMarkGenerator(Tk):
         
 
 class MainFrame(Frame):
-    def __init__(self, master, image, text, font):
+    def __init__(self, master, image, text, font, colour):
         Frame.__init__(self, master)
         master.title("Watermark Generator")
         Label(self, text="Please upload an image to watermark.").grid(row=0, column=1)
@@ -68,7 +69,6 @@ class MainFrame(Frame):
 
     def resize_image(self, image):
         image_width, image_height = image.size
-        print(image_width, image_height)
         if image_width > (SCREEN_WIDTH - 100) or image_height > (SCREEN_HEIGHT - 100):
             image = image.resize((image_width - 500, image_height - 500))
             # TODO: improve efficiency of resizing method
@@ -77,7 +77,7 @@ class MainFrame(Frame):
 
 
 class CheckImageFrame(Frame):
-    def __init__(self, master, image, text, font):
+    def __init__(self, master, image, text, font, colour):
         self.font_options = {
             "Oswald-Light": "fonts\Oswald-Light.ttf",
             "Pacifico": "fonts\Pacifico.ttf",
@@ -97,45 +97,65 @@ class CheckImageFrame(Frame):
         self.button_frame.grid(column=0, row=2, pady=10)
 
     def _choose_watermark(self):
-        # TODO: add font choice drop down box - low priority
         # TODO: add colour options to the watermark generator
-
-        
 
         if self.toplevel == None:
             self.toplevel = Toplevel()
             label = Label(self.toplevel, text="What text would you like to watermark the image with?")
             label.grid(row=0, column=0, padx=20)
-            label2 = Label(self.toplevel, text="Text must be under 10 characters ")
+            label2 = Label(self.toplevel, text="Text must 3 characters or under.")
             label2.grid(row=1, column=0, padx=10)
             self.text_box = Text(self.toplevel, height=1, width=20)
             self.text_box.grid(row=2, column=0, padx=20)
+
+            # Font choice widgets
             self.variable = StringVar(self.toplevel)
             self.variable.set(list(self.font_options.keys())[0])
-            self.font_select = OptionMenu(self.toplevel, self.variable, *list(self.font_options.keys()))
-            self.font_select.grid(row=3, column=0, padx=20)
+            self.font_frame = Frame(master=self.toplevel)
+            self.font_label = Label(self.font_frame, text="Font Choice: ")
+            self.font_label.grid(row=0, column=0, padx=10)
+            self.font_select = OptionMenu(self.font_frame, self.variable, *list(self.font_options.keys()))
+            self.font_select.grid(row=0, column=1, padx=10)
+            self.font_frame.grid(row=3, padx=20, pady=5)
+
+            # Colour choice widgets
+            self.colour_frame = Frame(master=self.toplevel)
+            self.colour_label = Label(self.colour_frame, text="Colour Choice: ")
+            self.colour_label.grid(row=0, column=0, padx=20, pady=5)
+            self.colour_button = Button(self.colour_frame, text="Select a Colour", command=self._select_colour)
+            self.colour_button.grid(row=0, column=1, padx=20, pady=5)
+            self.colour_frame.grid(row=4, column=0, padx=20, pady=5)
+
             self.btn = Button(self.toplevel, text="Ok.", command=self._to_check_wm)
-            self.btn.grid(row=4, column=0, padx=20)
+            self.btn.grid(row=5, column=0, padx=10)
+            Label(self.toplevel, text="").grid(row=6, padx=10)
             self.toplevel.bind('<Return>', lambda event: self._to_check_wm())
+
+    def _select_colour(self):
+        self.colour_pick = askcolor(color=None, title="Watermark Generator Colour Chooser")
+        self.colour = self.colour_pick[0]
+
+        
+
 
     def _to_first_frame(self):
         self.master.switch_frame(MainFrame)
         
     def _to_check_wm(self):
         self.chosen_font = self.font_options[self.variable.get()]
-        print(self.chosen_font)
         self.water_mark_text = self.text_box.get(1.0, END)
-        if len(self.water_mark_text) < 11 and self.water_mark_text and self.water_mark_text.strip():
+        if len(self.water_mark_text) < 4 and self.water_mark_text and self.water_mark_text.strip():
             self.toplevel.destroy()
-            self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text, font=self.chosen_font)
+            self.master.switch_frame(CheckWaterMarkFrame, image=self.image, text=self.water_mark_text, font=self.chosen_font, colour=self.colour)
             
 
 class CheckWaterMarkFrame(Frame):
-    def __init__(self, master, image, text, font):
+    def __init__(self, master, image, text, font, colour):
         Frame.__init__(self, master)
         self.image = image
         self.text = text
         self.font = font
+        self.colour = colour
         self.tk_watermark_image = self.watermark_image()
         Label(self, image=self.tk_watermark_image).grid(column=0, row=0)
         Label(self, text="Is this image watermarked how you would like?").grid(column=0, row=1)
@@ -157,7 +177,7 @@ class CheckWaterMarkFrame(Frame):
         image_width, image_height = self.watermark_image.size
         for x in range(0, image_width, 150):
             for y in range(0, image_height, 150):
-                self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (x, y),  w)
+                self.watermark_image.paste(ImageOps.colorize(w, (0,0,0), self.colour), (x, y),  w)
 
         plt.imshow(self.watermark_image)
         plt.show()
@@ -180,7 +200,7 @@ class CheckWaterMarkFrame(Frame):
         self.rgb_image.save(file)
 
 
-# TODO: go through and delete unnecessary self references
 # TODO: go through button commands and make them lambda expressions
+# TODO:
 # example of doing so in answer here:
 # https://stackoverflow.com/questions/14824163/how-to-get-the-input-from-the-tkinter-text-widget
